@@ -1,0 +1,26 @@
+V2.1
+
+postup pro vytvoøení nového projektu a import knihoven ze vzorového projektu
+1. Project -> Add new project into workspace -> New Project
+2. Napsat jméno projektu, vytvoøit složku pro projekt (ideálnì stejného jména), zkontrolovat "toolchain" (cesta k ...\COSMIC\FSE_Compilers\CXSTM8)
+3. vybrat MCU ("STM8S208RB")
+4. V oknì workspace je náš projekt tuènì (aktivní). Pokud ne, pravým tlaèítkem oznaèit a dát "Set as Active Project"
+5. Otevøít v prùzkumníku/commanderu složku s naším projektem (obsahuje složky Debug a Release a soubory main.c a stm8_interrupt_vector.c)
+6. Zkopírovat celý obsah VZOROVÉ složky do složky s vaším projektem (pøepíše existující soubory)
+7. V STVD v oknì workspace rozkliknout symbol + u jména projektu (otevøe se stromová struktura s virutálními složkami "Source files", "Include files" ...)
+8. Pravým tlaèítkem na "Source files->Add Files To Folder", nalistujeme složku s NAŠÍM (ne vzorovým) projektem a otevøeme složku "src" a v ní oznaèíme všechny soubory (koncovka *.c) a potvrdíme
+9. Pravým tlaèítkem na "Include files->Add Files To Folder", nalistujeme složku s NAŠÍM (ne vzorovým) projektem a otevøeme složku "inc" a v ní oznaèíme všechny soubory (koncovka *.h) a potvrdíme
+10. Klikneme na "Project->Settings", v levém sloupci by mìl být oznaèen NÁŠ projekt. Vpravo zvolíme záložku "C compiler" a do øádky "Preprocessor definitions" napíšeme F_CPU=16000000 (pøípadnì jinou èíselnou hodnotu podle toho jakou frekvenci pužíváme, napø. 2000000) a potvrdíme
+
+poznámky:
+vzorový projekt obsahuje krom standardních i "nestandardní" knihovny a to:
+delay - obsahuje _delay_us(), která slouží pro krátká spoždìní v øádu jednotek až stovek us (slouží k podpoøe komunikaèních rozhraní, AD pøevodníku atd.)
+milis - umožòuje provádìt základní èasování (rezervuje si pro svou èinnost TIM4 a povolené pøerušení - povoluje ho sama volaním funkce init_milis), lze pøepínat mezi 32bit a 16bit (výchozí) režimem milis
+spse_stm8 - obsahuje rùzné užiteèné funkce (momentálnì ovládání AD pøevodníku - ve standardních knihovnách nevhodnì øešené)
+stm8_hd44780 - knihovna pro ovládání displeje s driverem HD447800 nebo ekvivalentem (3+4 drátové rozhraní)
+swspi - primitivní "knihovna" obsluhující odesílání 16bit slova SPI protokolem (Mode 0 / CPOL=0 / CPHA=0)
+
+další poznámky:
+main.c obsahuje vzor kde jsou na zaèátku zakomentované funkce init_milis a pøepnutí clocku na 16MHz (protože to asi budeme èasto používat)
+stm8s_it.c má zakomentovanou rutinu pøerušení timeru 4, takže vyžaduje aby byl v projektu pøítomen soubor milis.c (kde je tìlo této rutiny pøerušení)
+milis.h obsahuje pøeddefinované hodnoty pro timer pro F_CPU=2MHz a F_CPU=16MHz, pro jiné taktovací frekvence si èlovìk musí dodefinovat prescaler a strop sám
